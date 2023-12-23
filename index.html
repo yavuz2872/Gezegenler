@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #sun {
+      width: 50px;
+      height: 50px;
+      background-color: #ffeb3b;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      transform-origin: center;
+      animation-timing-function: linear;
+      cursor: pointer;
+    }
+
+    .planet-name {
+      position: absolute;
+      top: -15px;
+      color: white;
+      font-size: 10px;
+      text-align: center;
+      width: 100%;
+      display: block;
+    }
+
+    #info-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      display: none;
+    }
+
+    #info {
+      color: #333;
+      font-size: 14px;
+    }
+
+    #mercury { background-color: #d8d8d8; width: 15px; height: 15px; }
+    #venus   { background-color: #e2b973; width: 20px; height: 20px; }
+    #earth   { background-color: #4a90e2; width: 25px; height: 25px; }
+    #mars    { background-color: #f27d68; width: 20px; height: 20px; }
+    #jupiter { background-color: #d59b3e; width: 50px; height: 50px; }
+    #saturn  { background-color: #dbcfb0; width: 45px; height: 45px; border: 2px solid #8d6e63; }
+    #uranus  { background-color: #68a0e8; width: 40px; height: 40px; }
+    #neptune { background-color: #4989f5; width: 35px; height: 35px; }
+  </style>
+</head>
+<body>
+  <div id="sun"></div>
+  <div id="mercury" class="planet">
+    <span class="planet-name">Merkür</span>
+  </div>
+  <div id="venus" class="planet">
+    <span class="planet-name">Venüs</span>
+  </div>
+  <div id="earth" class="planet">
+    <span class="planet-name">Dünya</span>
+  </div>
+  <div id="mars" class="planet">
+    <span class="planet-name">Mars</span>
+  </div>
+  <div id="jupiter" class="planet">
+    <span class="planet-name">Jüpiter</span>
+  </div>
+  <div id="saturn" class="planet">
+    <span class="planet-name">Satürn</span>
+  </div>
+  <div id="uranus" class="planet">
+    <span class="planet-name">Uranüs</span>
+  </div>
+  <div id="neptune" class="planet">
+    <span class="planet-name">Neptün</span>
+  </div>
+
+  <div id="info-container">
+    <div id="info"></div>
+  </div>
+
+  <script>
+    const sun = document.getElementById('sun');
+    const planets = document.querySelectorAll('.planet');
+    const infoContainer = document.getElementById('info-container');
+    const info = document.getElementById('info');
+    const numbers = Array.from({ length: 10 }, (_, i) => i + 1); // 1'den 10'a kadar olan sayılar
+
+    function showPlanetInfo(planetName, rotationSpeed) {
+      const randomNum = getRandomNumber();
+      info.innerHTML = `${planetName}: ${rotationSpeed.toFixed(2)} gün/devrim<br>Rastgele Sayı: ${randomNum}`;
+      infoContainer.style.display = 'block';
+    }
+
+    function hideInfo() {
+      infoContainer.style.display = 'none';
+    }
+
+    function getRandomNumber() {
+      const randomIndex = Math.floor(Math.random() * numbers.length);
+      return numbers.splice(randomIndex, 1)[0];
+    }
+
+    function animatePlanets() {
+      let angle = 0;
+
+      setInterval(() => {
+        angle += 0.01;
+
+        sun.style.transform = `rotate(${angle}deg)`;
+        
+        planets.forEach((planet, index) => {
+          const radius = 100 + index * 40;
+          const x = radius * Math.cos(angle * (index + 1) * 0.1);
+          const y = radius * Math.sin(angle * (index + 1) * 0.1);
+
+          planet.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        // Dünya bir tur attığında rastgele sayı göster
+        if (angle >= 360) {
+          const planetName = 'Dünya';
+          const rotationSpeed = 0.1;
+          showPlanetInfo(planetName, rotationSpeed);
+        }
+      }, 50);
+    }
+
+    planets.forEach((planet, index) => {
+      const planetName = planet.querySelector('.planet-name').textContent;
+      const rotationSpeed = 0.1 / (index + 1);
+
+      planet.addEventListener('mouseover', () => {
+        showPlanetInfo(planetName, rotationSpeed);
+        planet.querySelector('.planet-name').style.display = 'block';
+      });
+
+      planet.addEventListener('mouseout', () => {
+        hideInfo();
+        planet.querySelector('.planet-name').style.display = 'block';
+      });
+    });
+
+    animatePlanets();
+  </script>
+</body>
+</html>
